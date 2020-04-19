@@ -1,4 +1,4 @@
-import com.github.jaskelai.infobez.diffie_hellman.DiffieHellman33Case
+import com.github.jaskelai.infobez.DiffieHellman33Case
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

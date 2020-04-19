@@ -1,4 +1,4 @@
-package com.github.jaskelai.infobez.diffie_hellman
+package com.github.jaskelai.infobez
 
 import java.math.BigInteger
 import java.util.*
@@ -11,10 +11,10 @@ class DiffieHellman33Case {
     }
 
     // g - начальное значение g
-    private val g: BigInteger = BigInteger(G.toString())
+    val g: BigInteger = BigInteger(G.toString())
 
     // p - начальное значение p
-    private val p = BigInteger(P_HASH, 16)
+    val p = BigInteger(P_HASH, 16)
 
     // a - секретный ключ
     private val secretKey: BigInteger = nextRandomBigInt(p)
