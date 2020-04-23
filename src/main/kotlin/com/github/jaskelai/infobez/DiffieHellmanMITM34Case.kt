@@ -62,39 +62,39 @@ class DiffieHellmanMITM34Case {
 
         return Triple(message, hackedAliceMessage, hackedBobMessage)
     }
+}
 
-    private fun getSha1Hash(input: String): String {
-        val digest = MessageDigest.getInstance("SHA-1")
-        val result = digest.digest(input.toByteArray())
+fun getSha1Hash(input: String): String {
+    val digest = MessageDigest.getInstance("SHA-1")
+    val result = digest.digest(input.toByteArray())
 
-        val sb = StringBuilder()
+    val sb = StringBuilder()
 
-        for (b in result) {
-            sb.append(String.format("%02X", b))
-        }
-
-        return sb.toString()
+    for (b in result) {
+        sb.append(String.format("%02X", b))
     }
 
-    private fun generateByteArray(size: Int): ByteArray {
-        val byteArray = ByteArray(size)
-        SecureRandom.getInstanceStrong().nextBytes(byteArray)
-        return byteArray
-    }
+    return sb.toString()
+}
 
-    // AES + CBC шифрование
-    private fun aesCbcEncrypt(input: ByteArray, key: ByteArray, iv: ByteArray): ByteArray {
-        val aesKey = SecretKeySpec(key, "AES")
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        cipher.init(Cipher.ENCRYPT_MODE, aesKey, IvParameterSpec(iv))
-        return cipher.doFinal(input)
-    }
+fun generateByteArray(size: Int): ByteArray {
+    val byteArray = ByteArray(size)
+    SecureRandom.getInstanceStrong().nextBytes(byteArray)
+    return byteArray
+}
 
-    // AES + CBC дешифрование
-    private fun aesCbcDecrypt(input: ByteArray, key: ByteArray, iv: ByteArray): ByteArray {
-        val aesKey = SecretKeySpec(key, "AES")
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        cipher.init(Cipher.DECRYPT_MODE, aesKey, IvParameterSpec(iv))
-        return cipher.doFinal(input)
-    }
+// AES + CBC шифрование
+fun aesCbcEncrypt(input: ByteArray, key: ByteArray, iv: ByteArray): ByteArray {
+    val aesKey = SecretKeySpec(key, "AES")
+    val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+    cipher.init(Cipher.ENCRYPT_MODE, aesKey, IvParameterSpec(iv))
+    return cipher.doFinal(input)
+}
+
+// AES + CBC дешифрование
+fun aesCbcDecrypt(input: ByteArray, key: ByteArray, iv: ByteArray): ByteArray {
+    val aesKey = SecretKeySpec(key, "AES")
+    val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+    cipher.init(Cipher.DECRYPT_MODE, aesKey, IvParameterSpec(iv))
+    return cipher.doFinal(input)
 }
