@@ -11,6 +11,7 @@ fun main() {
 
 fun attack(input: String, size: Int): BigInteger {
 
+    //три раза шифруем текст
     val rsa0 = RSA(size)
     val c0 = rsa0.encrypt(BigInteger(input.toByteArray()))
     val n0 = rsa0.publicKey.second
@@ -23,10 +24,10 @@ fun attack(input: String, size: Int): BigInteger {
     val c2 = rsa2.encrypt(BigInteger(input.toByteArray()))
     val n2 = rsa2.publicKey.second
 
+    // китайская теорема об остатках
     val m0 = n1 * n2
     val m1 = n0 * n2
     val m2 = n0 * n1
-
 
     val temp0 = c0 * m0 * m0.modInverse(n0)
     val temp1 = c1 * m1 * m1.modInverse(n1)
