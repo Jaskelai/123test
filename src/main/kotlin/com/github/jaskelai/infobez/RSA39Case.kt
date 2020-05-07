@@ -7,21 +7,23 @@ import java.security.SecureRandom
 fun main() {
     val testString = "Oh, wow, it works"
     val testBigInteger = BigInteger(testString.toByteArray())
-    val rsa = RSA39Case(512)
+    val rsa = RSA(512)
     val encrypted = rsa.encrypt(testBigInteger)
     val decrypted = rsa.decrypt(encrypted)
     println(decrypted.toByteArray().decodeToString() == testString)
 }
 
-class RSA39Case(private val size: Int) {
+class RSA(private val size: Int) {
 
     private val random = SecureRandom()
-    private var p: BigInteger? = null
-    private var q: BigInteger? = null
-    private var n: BigInteger? = null
-    private var t: BigInteger? = null
+    private var p = BigInteger.ZERO
+    private var q = BigInteger.ZERO
+    private var n = BigInteger.ZERO
+    private var t = BigInteger.ZERO
     private val e = BigInteger.valueOf(3)
-    private var d: BigInteger? = null
+    private var d: BigInteger = BigInteger.ZERO
+
+    val publicKey: Pair<BigInteger, BigInteger>
 
     init {
         var notCompatable = true
@@ -34,14 +36,15 @@ class RSA39Case(private val size: Int) {
                 notCompatable = true
             }
         }
+        publicKey = Pair(e, n)
     }
 
     @Throws(ArithmeticException::class)
     private fun generateKeys() {
-        p = BigInteger.probablePrime(size, random)
-        q = BigInteger.probablePrime(size, random)
-        n = p?.multiply(q)
-        t = lcm(p?.minus(BigInteger.ONE), q?.minus(BigInteger.ONE))
+        p = BigInteger.probablePrime(size / 2, random)
+        q = BigInteger.probablePrime(size / 2, random)
+        n = p * q
+        t = lcm(p - BigInteger.ONE, q - BigInteger.ONE)
         d = e.modInverse(t)
     }
 
@@ -52,12 +55,12 @@ class RSA39Case(private val size: Int) {
     fun decrypt(base: BigInteger): BigInteger = base.modPow(d, n)
 
     // Наибольший общий делитель
-    private fun gcd(a: BigInteger?, b: BigInteger?): BigInteger? = a?.gcd(b)
+    private fun gcd(a: BigInteger, b: BigInteger): BigInteger = a.gcd(b)
 
     // Наименьшее общее кратное
-    private fun lcm(a: BigInteger?, b: BigInteger?): BigInteger? {
+    private fun lcm(a: BigInteger, b: BigInteger): BigInteger {
         val gcd = gcd(a, b)
-        val absProduct = a?.multiply(b)?.abs()
-        return absProduct?.divide(gcd)
+        val abs = (a * b).abs()
+        return abs / gcd
     }
 }
