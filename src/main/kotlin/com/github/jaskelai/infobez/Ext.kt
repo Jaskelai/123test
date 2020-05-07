@@ -7,7 +7,7 @@ import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.pow
 
-
+// наиболее точное(с небольшой погрешностью) вычисление корня из куба
 fun cubeRoot(input: BigInteger): BigInteger = root(3, BigDecimal(input)).toBigInteger()
 
 private fun root(n: Int, x: BigDecimal): BigDecimal {

@@ -2,14 +2,13 @@ package com.github.jaskelai.infobez
 
 import java.math.BigInteger
 
-
 fun main() {
     val text = "HMMMMMM"
     val rsaAttackResult = attack(text, 1024)
     println(rsaAttackResult == BigInteger(text.toByteArray()))
 }
 
-fun attack(input: String, size: Int): BigInteger {
+private fun attack(input: String, size: Int): BigInteger {
 
     //три раза шифруем текст
     val rsa0 = RSA(size)
