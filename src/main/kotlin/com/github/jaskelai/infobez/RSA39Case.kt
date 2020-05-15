@@ -41,8 +41,8 @@ class RSA(private val size: Int) {
 
     @Throws(ArithmeticException::class)
     private fun generateKeys() {
-        p = BigInteger.probablePrime(size / 2, random)
-        q = BigInteger.probablePrime(size / 2, random)
+        p = BigInteger.probablePrime(size, random)
+        q = BigInteger.probablePrime(size, random)
         n = p * q
         t = lcm(p - BigInteger.ONE, q - BigInteger.ONE)
         d = e.modInverse(t)
