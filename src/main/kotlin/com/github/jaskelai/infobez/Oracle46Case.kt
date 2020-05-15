@@ -2,43 +2,49 @@ package com.github.jaskelai.infobez
 
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.math.BigInteger.TWO
 import java.util.*
 
 fun main() {
 
-    val msg =
-        Base64.getDecoder().decode("VGhhdCdzIHdoeSBJIGZvdW5kIHlvdSBkb24ndCBwbGF5IGFyb3VuZCB3aXRoIHRoZSBGdW5reSBDb2xkIE1lZGluYQ==")
+    val msg = Base64.getDecoder()
+        .decode("VGhhdCdzIHdoeSBJIGZvdW5kIHlvdSBkb24ndCBwbGF5IGFyb3VuZCB3aXRoIHRoZSBGdW5reSBDb2xkIE1lZGluYQ==")
 
     val rsa = RSA(1024)
     val encryptedMsg = rsa.encrypt(BigInteger(msg))
 
-   parityOracleAttack(encryptedMsg, rsa, true)
+    println(attack(encryptedMsg, rsa).toByteArray().contentToString())
 }
 
-fun parityOracleAttack(cipherText: BigInteger, rsa: RSA, wantToPrint: Boolean): BigInteger {
+fun attack(cipherText: BigInteger, rsa: RSA): BigInteger {
+
     val n: BigInteger = rsa.publicKey.second
     var cipher = cipherText
-    var minimum = BigDecimal.ZERO
-    var maximum = BigDecimal(n) //n.add(BigInteger.ONE.negate());
-    val encryptedMultiplier: BigInteger = rsa.encrypt(BigInteger.TWO)
-    while (BigDecimal.valueOf(0.5) < maximum.add(minimum.negate())) {
+
+    var minDecimal = BigDecimal.ZERO
+    var maxDecimal = BigDecimal(n)
+
+    val encryptedMultiplier = rsa.encrypt(TWO)
+
+    // Проверяем каждый бит сообщения
+    while (BigDecimal.valueOf(0.5) < maxDecimal.add(minDecimal.negate())) {
+
         cipher = cipher.multiply(encryptedMultiplier).mod(n)
-        val half = minimum.add(maximum).divide(BigDecimal.valueOf(2))
-        val even: Boolean = rsa.isEven(cipher)
-        if (even) {
-            maximum = half
-        } else {
-            minimum = half
-        }
-        if (wantToPrint) {
-            println(maximum)
-            println(String(maximum.toBigInteger().toByteArray()))
-        }
+
+        // удваиваем шифртекст
+        val half = (minDecimal + maxDecimal) / BigDecimal.valueOf(2)
+
+        // Проверяем четность после удвоения
+        val even = rsa.isEven(cipher)
+
+        if (even) { maxDecimal = half } else { minDecimal = half }
     }
-    return maximum.toBigInteger()
+
+    return maxDecimal.toBigInteger()
 }
 
-private fun ByteArray.toBigInteger() = BigInteger(this)
 
-private fun RSA.isEven(encryptedData: BigInteger): Boolean =
-    encryptedData.modPow(publicKey.first, publicKey.second).mod(BigInteger.TWO) == BigInteger.ZERO
+// Проверка на четность
+private fun RSA.isEven(encryptedData: BigInteger): Boolean {
+    return encryptedData.modPow(publicKey.first, publicKey.second).mod(TWO) == BigInteger.ZERO
+}
